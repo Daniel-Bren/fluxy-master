@@ -1,7 +1,8 @@
 'use client'
 
 import { deletarTransacao, cancelarRecorrencia } from '@/app/dashboard/transacoes/actions'
-import { Trash2, ArrowDownCircle, ArrowUpCircle, RefreshCw } from 'lucide-react'
+import { reabrirLancamento } from '@/app/dashboard/carteira/actions'
+import { Trash2, ArrowDownCircle, ArrowUpCircle, RefreshCw, RotateCcw } from 'lucide-react'
 
 type Transacao = {
   id: string
@@ -38,6 +39,10 @@ export default function ListaTransacoes({ transacoes }: Props) {
   async function handleCancelarRecorrencia(recorrenciaId: string, data: string) {
     if (!confirm('Cancelar recorrência a partir deste mês? Os meses anteriores serão mantidos.')) return
     await cancelarRecorrencia(recorrenciaId, data)
+  }
+
+  async function handleReabrir(id: string) {
+    await reabrirLancamento(id)
   }
 
   return (
@@ -90,6 +95,16 @@ export default function ListaTransacoes({ transacoes }: Props) {
                 currency: 'BRL',
               })}
             </span>
+
+            {t.status === 'pago' && (
+              <button
+                onClick={() => handleReabrir(t.id)}
+                className="text-[#6B7280] hover:text-[#DC2626] transition-colors"
+                title="Reabrir lançamento"
+              >
+                <RotateCcw size={15} />
+              </button>
+            )}
 
             {t.recorrente && t.recorrencia_id && (
               <button

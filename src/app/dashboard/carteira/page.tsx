@@ -31,6 +31,8 @@ export default async function CarteiraPage({ searchParams }: Props) {
       valor,
       data,
       descricao,
+      categoria_id,
+      recorrencia_id,
       categorias (
         nome
       )
@@ -59,7 +61,7 @@ export default async function CarteiraPage({ searchParams }: Props) {
       </div>
 
       <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-        <ListaCarteira transacoes={(transacoes ?? []) as any} />
+        <ListaCarteira transacoes={(transacoes ?? []) as any} categorias={categorias ?? []} />
       </div>
     </div>
   )
