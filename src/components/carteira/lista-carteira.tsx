@@ -1,7 +1,6 @@
 'use client'
 
 import { marcarComoPago } from '@/app/dashboard/carteira/actions'
-import { ArrowDownCircle, ArrowUpCircle, CheckCircle2 } from 'lucide-react'
 
 type Transacao = {
   id: string
@@ -21,38 +20,38 @@ function ItemCarteira({ t }: { t: Transacao }) {
     await marcarComoPago(t.id)
   }
 
-  return (
-    <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-      <div className="flex items-center gap-3">
-        {t.tipo === 'entrada' ? (
-          <ArrowDownCircle size={22} className="text-[#16A34A]" />
-        ) : (
-          <ArrowUpCircle size={22} className="text-[#DC2626]" />
-        )}
+  const categoria = t.categorias?.[0]?.nome
+  const data = new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+  const valor = t.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
-        <div>
-          <p className="text-sm font-medium text-[#111827]">
-            {t.descricao || t.categorias?.[0]?.nome || '—'}
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className={`w-3 h-3 rounded-full shrink-0 ${
+          t.tipo === 'entrada' ? 'bg-[#16A34A]' : 'bg-[#DC2626]'
+        }`} />
+
+        <div className="min-w-0">
+          <p className="text-base font-semibold text-[#111827] truncate">
+            {t.descricao || categoria || '—'}
           </p>
-          <p className="text-xs text-[#6B7280]">
-            {t.categorias?.[0]?.nome} •{' '}
-            {new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+          <p className="text-xs text-[#6B7280] mt-0.5">
+            {categoria}{categoria ? ' • ' : ''}{data}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <span className={`text-sm font-semibold ${t.tipo === 'entrada' ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
-          {t.tipo === 'saida' ? '- ' : ''}
-          {t.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-        </span>
-
+      <div className="flex flex-col items-end gap-2 shrink-0">
+        <p className={`text-xl font-bold ${
+          t.tipo === 'entrada' ? 'text-[#16A34A]' : 'text-[#DC2626]'
+        }`}>
+          {t.tipo === 'saida' ? '- ' : ''}{valor}
+        </p>
         <button
           onClick={handleMarcar}
-          title={t.tipo === 'entrada' ? 'Marcar como recebido' : 'Marcar como pago'}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-[#6B7280] hover:text-[#16A34A] hover:bg-green-50 transition-colors"
+          className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[#16A34A] text-[#16A34A] bg-white hover:bg-[#16A34A] hover:text-white transition-colors whitespace-nowrap"
         >
-          <CheckCircle2 size={18} />
+          {t.tipo === 'entrada' ? 'Marcar como recebido' : 'Marcar como pago'}
         </button>
       </div>
     </div>
@@ -68,8 +67,27 @@ export default function ListaCarteira({ transacoes }: Props) {
     )
   }
 
+  const totalSaidas = transacoes
+    .filter((t) => t.tipo === 'saida')
+    .reduce((acc, t) => acc + Number(t.valor), 0)
+
   return (
     <div className="space-y-3">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm text-[#6B7280]">
+          <span className="font-semibold text-[#111827]">{transacoes.length}</span>{' '}
+          {transacoes.length === 1 ? 'lançamento em aberto' : 'lançamentos em aberto'}
+        </p>
+        {totalSaidas > 0 && (
+          <p className="text-sm text-[#6B7280]">
+            Despesas pendentes:{' '}
+            <span className="font-semibold text-[#DC2626]">
+              {totalSaidas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </span>
+          </p>
+        )}
+      </div>
+
       {transacoes.map((t) => (
         <ItemCarteira key={t.id} t={t} />
       ))}
