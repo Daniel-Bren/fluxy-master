@@ -28,7 +28,7 @@ export async function criarTransacao(formData: FormData) {
 
     const [ano, mes, dia] = data.split('-').map(Number)
 
-    for (let i = 0; i < mesesRecorrencia; i++) {
+    for (let i = 1; i <= mesesRecorrencia; i++) {
       const novaData = new Date(ano, mes - 1 + i, dia)
       const dataFormatada = `${novaData.getFullYear()}-${String(novaData.getMonth() + 1).padStart(2, '0')}-${String(novaData.getDate()).padStart(2, '0')}`
 
@@ -41,8 +41,8 @@ export async function criarTransacao(formData: FormData) {
         descricao,
         recorrente: true,
         recorrencia_id,
-        recorrencia_origem: i === 0,
-        status,
+        recorrencia_origem: i === 1,
+        status: 'aberto',
       })
     }
 

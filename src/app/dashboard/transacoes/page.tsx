@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import NovaTransacaoModal from '@/components/transacoes/nova-transacao-modal'
 import ListaTransacoes from '@/components/transacoes/lista-transacoes'
 import SeletorMes from '@/components/seletor-mes'
 import FiltrosTransacoes from '@/components/transacoes/filtros-transacoes'
@@ -63,12 +62,9 @@ export default async function TransacoesPage({ searchParams }: Props) {
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <Suspense fallback={<div className="w-48 h-8 bg-gray-100 rounded-lg animate-pulse" />}>
-            <SeletorMes />
-          </Suspense>
-          <NovaTransacaoModal categorias={categorias ?? []} />
-        </div>
+        <Suspense fallback={<div className="w-48 h-8 bg-gray-100 rounded-lg animate-pulse" />}>
+          <SeletorMes />
+        </Suspense>
       </div>
 
       <div className="mb-4">
